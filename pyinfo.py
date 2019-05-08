@@ -12,7 +12,7 @@ def pyinfo():
     output +=   '<div class="center">'
     output +=     section_title()
 
-    output +=     '<h2>System - AKS Sistemas - facilitando sua vida</h2>'
+    output +=     '<h2>System - AKS Sistemas - facilitando sua vida</h2>Img<img src="imgs/img.png">'
     output +=     section_system()
 
     output +=     '<h2>Python Internals</h2>'

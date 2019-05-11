@@ -7,4 +7,3 @@ def application(environ, start_response):
     output = pyinfo()
     start_response('200 OK', [('Content-type', 'text/html')])
     yield output.encode('utf-8')
-

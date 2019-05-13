@@ -19,3 +19,5 @@ def application(environ, start_response):
 
     # yield output.encode('utf-8')
     # yield retorno.encode('utf-8')
+
+    yield 'churros ok'.encode('utf-8')

@@ -10,7 +10,7 @@ def application(environ, start_response):
 
     # from pyinfo import pyinfo
     # from testemain import retorno
-    from flask_simples import app as application
+    from flask_simples.hello import app as application
 
     # output = pyinfo()
     # retorno = retorno()

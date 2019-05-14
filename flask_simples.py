@@ -1,10 +1,7 @@
 from flask import Flask
-from flask import request, render_template
+from flask import request
 
-print("Menu nome:", __name__)
-print("Meu nome2:", __name__.split('.')[0])
-#app = Flask(__name__)
-app = Flask("qualquer")
+app = Flask("ROOT")
 
 @app.route("/")
 def hello():
@@ -26,4 +23,4 @@ def lista_de_noticias(pais, estado=None):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

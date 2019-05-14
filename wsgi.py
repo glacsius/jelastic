@@ -4,7 +4,8 @@ import sys
 
 sys.path.insert(0, "/var/www/webroot/ROOT")
 
-from flask_simples import app as application
+# from flask_simples import app as application
+from flask_restplus_teste import app as application
 
 
 #def application(environ, start_response):

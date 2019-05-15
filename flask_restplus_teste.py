@@ -11,7 +11,7 @@ todo = api.model('Todo', {'id': fields.Integer(description='É a id'),
                           'nome': fields.String(description='Nome do kra')})
 
 cliente = api.model('Cliente', {'id': fields.Integer, 'nome': fields.String})
-clientes = [{"id":1, "nome": 'Glaucio'}, {"id":2, "nome": 'Cristina'}]
+clientes = [{"id": 1, "nome": 'Glaucio'}, {"id": 2, "nome": 'Cristina'}]
 
 class Todo(object):
     def get(self, id):
@@ -27,6 +27,7 @@ class TodList(Resource):
 
 @ns.route('/cliente')
 @ns.route('/cliente/<id>')
+@ns.response(404, 'Cliente não encontrado.')
 class Cliente(Resource):
     @ns.marshal_list_with(cliente)
     def get(self, id=None):

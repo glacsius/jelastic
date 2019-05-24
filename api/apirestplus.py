@@ -7,6 +7,6 @@ api = Api(version='1.0', title='API Sistema AKS',
 
 @api.errorhandler
 def default_error_handler(e):
-    message = 'An unhandled exception occurred.'
-    return {'message': message}, 500
+    message = 'Erro no processamento no servidor'
+    return {'message': message, 'exception': str(e)}, 500
 

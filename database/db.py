@@ -5,6 +5,17 @@ db = SQLAlchemy()
 
 
 def config_db(app):
-    app.config['BANCODEDADOS'] = 'sqlite:////tmp/test.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/aks.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     db.init_app(app)
     db.create_all(app=app)
+
+
+def add_obj(obj):
+    db.session.add(obj)
+    db.session.commit()
+
+
+def delete_obj(obj):
+    db.session.deletes(obj)
+    db.session.commit()

@@ -17,5 +17,10 @@ def add_obj(obj):
 
 
 def delete_obj(obj):
-    db.session.deletes(obj)
+    db.session.delete(obj)
     db.session.commit()
+
+
+def maior(campo):
+    res = db.session.query(db.func.max(campo)).scalar()
+    return int(res)

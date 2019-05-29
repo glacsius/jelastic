@@ -1,90 +1,100 @@
 from flask import request
-from flask_restplus import Resource, fields
+from flask_restplus import Resource
 from api.apirestplus import api
-from api.controllers.clientes_ctrl import ClientesCtrl
+from api.controllers.clientes import ClientesCtrl, ClienteLiberadoCtrl, ClienteSolicitarSenhaInstalacaoCtrl
+from api.controllers.clientes import ClienteValidarSenhaCtrl
+from api.modelos.clientes import cliente_restplus, cliente_liberacao, clientes_validar_senha
+from api import respostas
 
 
-ns = api.namespace('clientes', description='Operações dos clientes que utilizam o Sistema AKS')
+ns = api.namespace('clientes', description='Clientes que utilizam o Sistema AKS')
 
 
-clientes_serialize = api.model('clientes', {
-    'cnpj_cpf': fields.String(required=True, description='CNPJ ou CPF do cliente', help='CNPJ/CPF não pode ser vazio'),
-    'nome': fields.String(required=True, description='Nome do cliente - Fantasia + Razão Social'),
-    'email_responsavel': fields.String(description='E-mail do responsável da empresa')
-})
-
-clientes_liberacao = api.model('cliente_liberacao', {
-    'liberado': fields.Boolean(required=True)
-})
-
-clientes_validar_senha = api.model('cliente_validar_senha', {
-    'senha': fields.String(required=True)
-})
-
-
-@ns.route('/')
+@ns.route('')
 class ClientesList(Resource):
 
-    @api.marshal_list_with(clientes_serialize)
+    @api.response(500, respostas.RESP_500_DOC)
+    @api.marshal_list_with(cliente_restplus, description='Retorno da lista de clientes')
     def get(self):
+        '''Listar os clientes cadastrados'''
         return ClientesCtrl().get()
 
-    @api.response(201, 'Cliente cadastrado')
-    @api.response(400, 'Algum parametro informado é inválido')
-    @api.response(409, 'Já existe um cliente com o CNPJ/CPF informado')
-    @api.response(500, 'Erro no processamento')
-    @api.expect(clientes_serialize)
-    @api.marshal_with(clientes_serialize, code=201)
+    @api.response(201, respostas.RESP_201_DOC_POST_CREATED)
+    @api.response(400, respostas.RESP_400_DOC)
+    @api.response(409, respostas.RESP_409_DOC.format('cliente', 'CNPJ/CPF'))
+    @api.response(500, respostas.RESP_500_DOC)
+    @api.marshal_with(cliente_restplus)
+    @api.expect(cliente_restplus)
     def post(self):
-        return ClientesCtrl().post(request), 201
-
-
-@ns.route('/validar_senha')
-class ClienteValidarSenha(Resource):
-
-    @api.response(200, ClientesCtrl().MSG_VALIDAR_SENHA_200)
-    @api.response(400, ClientesCtrl().MSG_VALIDAR_SENHA_400)
-    def get(self):
-        return ClientesCtrl().validar_senha(request)
-
-    @api.response(200, ClientesCtrl().MSG_VALIDAR_SENHA_200)
-    @api.response(400, ClientesCtrl().MSG_VALIDAR_SENHA_400)
-    def post(self):
-        return ClientesCtrl().validar_senha(request)
+        '''Criar um cliente'''
+        return ClientesCtrl().post(request)
 
 
 @ns.route('/<cnpj_cpf>')
 class Cliente(Resource):
 
-    @api.marshal_with(clientes_serialize)
+    @api.response(404, respostas.RESP_404_DOC.format('Cliente'))
+    @api.response(500, respostas.RESP_500_DOC)
+    @api.marshal_with(cliente_restplus)
     def get(self, cnpj_cpf):
+        '''Obter um cliente'''
         return ClientesCtrl().get(cnpj_cpf)
 
-    @api.response(204, 'Cliente alterado')
-    @api.response(404, 'Cliente não encontrado')
-    @api.expect(clientes_serialize)
+    @api.response(204, respostas.RESP_204_DOC_PUT)
+    @api.response(400, respostas.RESP_400_DOC)
+    @api.response(404, respostas.RESP_404_DOC.format('Cliente'))
+    @api.response(500, respostas.RESP_500_DOC)
+    @api.expect(cliente_restplus)
     def put(self, cnpj_cpf):
+        '''Atualizar um cliente'''
         return ClientesCtrl().put(cnpj_cpf, request)
 
+    @api.response(204, respostas.RESP_204_DOC_DEL)
+    @api.response(404, respostas.RESP_404_DOC.format('Cliente'))
+    @api.response(500, respostas.RESP_500_DOC)
     def delete(self, cnpj_cpf):
+        '''Excluir um cliente'''
         return ClientesCtrl().delete(cnpj_cpf)
 
 
 @ns.route('/<cnpj_cpf>/liberado')
-class ClienteInfo(Resource):
+class ClienteLiberacao(Resource):
 
+    @api.response(404, respostas.RESP_404_DOC.format('Cliente'))
+    @api.response(500, respostas.RESP_500_DOC)
+    @api.marshal_with(cliente_liberacao)
     def get(self, cnpj_cpf):
-        return ClientesCtrl().info(cnpj_cpf)
+        '''Obter informação se o cliente está liberado para instalação/atualização'''
+        return ClienteLiberadoCtrl().get(cnpj_cpf)
 
-    @api.response(204, 'Cliente alterado')
-    @api.response(404, 'Cliente não encontrado')
-    @api.expect(clientes_liberacao)
+    @api.response(204, respostas.RESP_204_DOC_PUT)
+    @api.response(400, respostas.RESP_400_DOC)
+    @api.response(404, respostas.RESP_404_DOC.format('Cliente'))
+    @api.response(500, respostas.RESP_500_DOC)
+    @api.expect(cliente_liberacao)
     def put(self, cnpj_cpf):
-        return ClientesCtrl().info_put(cnpj_cpf, request)
+        '''Atualizar liberação de instalação/atualização'''
+        return ClienteLiberadoCtrl().put(cnpj_cpf, request)
 
 
 @ns.route('/<cnpj_cpf>/solicitar_senha_instalacao')
 class ClienteSolicitarSenhaInstalacao(Resource):
 
+    @api.response(202, ClienteSolicitarSenhaInstalacaoCtrl().MSG_EMAIL_ENVIADO_202)
+    @api.response(404, respostas.RESP_404_DOC.format('Cliente'))
+    @api.response(500, respostas.RESP_500_DOC)
     def post(self, cnpj_cpf):
-        return ClientesCtrl().solicitar_instalacao(cnpj_cpf, request)
+        '''Solicitar envio de email com a senha para instalação do Sistema AKS'''
+        return ClienteSolicitarSenhaInstalacaoCtrl().post(cnpj_cpf, request)
+
+
+@ns.route('/validar_senha')
+class ClienteValidarSenha(Resource):
+
+    @api.response(202, ClienteValidarSenhaCtrl().MSG_VALIDAR_SENHA_202)
+    @api.response(400, respostas.RESP_400_DOC)
+    @api.response(500, respostas.RESP_500_DOC)
+    @api.expect(clientes_validar_senha)
+    def post(self):
+        '''Validar a senha de instalação'''
+        return ClienteValidarSenhaCtrl().post(request)

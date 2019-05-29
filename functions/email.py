@@ -44,24 +44,13 @@ class Email(object):
         msg.attach(mime)
 
     def enviar_email(self, de, para, assunto, corpo, anexos=None):
-        # smtp_host, smtp_porta = 'br166.hostgator.com.br', 465
-        # smtp_host, smtp_porta = 'mail.pigarids.com.br', 465
-        # smtp_host, smtp_porta = 'email-smtp.us-east-1.amazonaws.com', 587
-        # smtp_host, smtp_porta = 'smtp.gmail.com', 465
+        # back a funciona no desespero
+        smtp_host, smtp_porta = 'mail.akssistemas.com.br', '587'
+        smtp_user, smtp_pass = 'suporte@akssistemas.com.br', '152634789'
+
         # smtp_host, smtp_porta = 'smtp.sparkpostmail.com', 587
-        # smtp_host, smtp_porta = 'email.pigarids.com.br', 587
-        # smtp_user, smtp_pass = 'backup@alkancesds.com.br', '152634'
-        # smtp_user, smtp_pass = 'akssistema@gmail.com', '152634789'
-        # smtp_user, smtp_pass = 'email@pigarids.com.br', '152634789'
-        # smtp_user, smtp_pass = 'AKIAIKV77DSMHORRHFBQ', 'AnnFHdgEzIQnt1DFY1XjmfSUUnKewlC1M8HQ4TfSCDtr'
         # smtp_user, smtp_pass = 'SMTP_Injection', '6b3e65c0c45958538dd875a86f4f0c43688718f6'
-
-        smtp_host, smtp_porta = 'smtp.sparkpostmail.com', 587
-        smtp_user, smtp_pass = 'SMTP_Injection', '6b3e65c0c45958538dd875a86f4f0c43688718f6'
         de = 'nfe@notas.akssistemas.com.br'
-
-        # smtp_host, smtp_porta = 'mail.akssistemas.com.br', 587
-        # smtp_user, smtp_pass = 'suporte@akssistemas.com.br', '152634789'
 
         if type(para) == str:
             para = [para]
